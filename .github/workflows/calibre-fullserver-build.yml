@@ -30,9 +30,8 @@ jobs:
           echo "${{ env.DOCKER_PASSWORD }}" | docker login ${{ env.DOCKER_REGISTRY_URL }} -u ${{ env.DOCKER_USERNAME }} --password-stdin
           
           echo "*** Construimos la imagen ${{ env.DOCKER_REGISTRY_URL }}/${{ env.DOCKER_IMAGE_NAME }}:latest"
-          sudo docker build build . \
+          sudo docker build . \
             --file Dockerfile \
-            --cache-to=type=inline \
             --tag ${{ env.DOCKER_IMAGE_NAME }}:latest \
             --tag ${{ env.DOCKER_IMAGE_NAME }}:${flag} \
             --output=type=registry
