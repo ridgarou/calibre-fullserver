@@ -1,5 +1,5 @@
 
-FROM linuxserver/calibre-web
+FROM linuxserver/calibre-web:arm64v8-latest
 
 LABEL maintainer="Ridgarou <ridgarou@gmail.com>" description="Calibre-Server with Calibre Web based on MephistoXoL (https://github.com/MephistoXoL/Docker-CalibreSrv-Web) image" version="multi.arch"
 
