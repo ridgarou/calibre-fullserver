@@ -47,8 +47,11 @@ jobs:
           password: ${{ env.DOCKER_PASSWORD }}
           # Log out from the Docker registry at the end of a job
           logout: true # optional, default is true
+
       - name: Create image Flag
-        run: flag=$(date +%s)
+        run: |
+          export FLAG=$(date +%s)
+          echo "::set-env name=FLAG::$FLAG"
           
       - name: Build and push Docker images
         # You may pin to the exact commit or the version.
@@ -64,7 +67,7 @@ jobs:
           # Docker repository to tag the image with
           repository: ${{ env.DOCKER_IMAGE_NAME }}
           # Comma-delimited list of tags. These will be added to the registry/repository to form the image's tags
-          tags: ${{ env.DOCKER_IMAGE_NAME }}:latest, ${{ env.DOCKER_IMAGE_NAME }}:${{ flag }} # optional
+          tags: ${{ env.DOCKER_IMAGE_NAME }}:latest, ${{ env.DOCKER_IMAGE_NAME }}:$FLAG # optional
           # Automatically tags the built image with the git reference as per the readme
           #tag_with_ref: # optional
           # Automatically tags the built image with the git short SHA as per the readme
