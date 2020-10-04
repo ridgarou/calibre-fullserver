@@ -1,14 +1,39 @@
-name: Docker Image CI
+name: Calibre Full Server Docker Image CI
 
-on: [push]
-
+on:
+  pull_request:
+    types: [closed]
+    branches: [master]
+  watch:
+    types: [started]
+env:
+  DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+  DOCKER_REGISTRY_URL: docker.io
+  DOCKER_IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/calibre-fullserver
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v1
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag calibre-fullserver:$(date +%s)
+#    - uses: actions/checkout@v1
+#    - name: Build the Docker image
+#      run: docker build . --file Dockerfile --tag calibre-fullserver:$(date +%s)
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        
+      - name: Buildx the Docker image
+        run: |
+          flag=$(date +%s)
+          echo "*** Imagen a crear ${DOCKER_REGISTRY_URL}/${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}:${flag}"
+          
+          echo "*** Login de ${{ env.DOCKER_USERNAME }} en ${{ env.DOCKER_REGISTRY_URL }}"
+          echo "${{ env.DOCKER_PASSWORD }}" | docker login ${{ env.DOCKER_REGISTRY_URL }} -u ${{ env.DOCKER_USERNAME }} --password-stdin
+          
+          echo "*** Construimos la imagen ${{ env.DOCKER_REGISTRY_URL }}/${{ env.DOCKER_IMAGE_NAME }}:latest"
+          sudo docker build build . \
+            --file Dockerfile \
+            --cache-to=type=inline \
+            --tag ${{ env.DOCKER_IMAGE_NAME }}:latest \
+            --tag ${{ env.DOCKER_IMAGE_NAME }}:${flag} \
+            --output=type=registry
+
