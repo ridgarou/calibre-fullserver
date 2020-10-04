@@ -22,6 +22,23 @@ jobs:
         run: |
           export FLAG=$(date +%s)
           echo "::set-env name=FLAG::$FLAG"
+      
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+        with:
+          platforms: all
+      
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+        with:
+          version: latest
+      
+      - name: Builder instance name
+        run: echo ${{ steps.buildx.outputs.name }}
+      
+      - name: Available platforms
+        run: echo ${{ steps.buildx.outputs.platforms }}
                     
       - name: Build and push Docker images
         # You may pin to the exact commit or the version.
