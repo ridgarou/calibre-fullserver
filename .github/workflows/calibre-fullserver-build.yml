@@ -67,7 +67,7 @@ jobs:
           # Docker repository to tag the image with
           repository: ${{ env.DOCKER_IMAGE_NAME }}
           # Comma-delimited list of tags. These will be added to the registry/repository to form the image's tags
-          tags: ${{ env.DOCKER_IMAGE_NAME }}:latest, ${{ env.DOCKER_IMAGE_NAME }}:$FLAG # optional
+          tags: ${{ env.DOCKER_IMAGE_NAME }}:latest, ${{ env.DOCKER_IMAGE_NAME }}:${{ env.FLAG }} # optional
           # Automatically tags the built image with the git reference as per the readme
           #tag_with_ref: # optional
           # Automatically tags the built image with the git short SHA as per the readme
