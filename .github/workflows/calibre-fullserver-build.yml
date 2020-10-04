@@ -20,19 +20,68 @@ jobs:
 #      run: docker build . --file Dockerfile --tag calibre-fullserver:$(date +%s)
       - name: Checkout Code
         uses: actions/checkout@v2
-        
-      - name: Buildx the Docker image
-        run: |
-          flag=$(date +%s)
-          echo "*** Imagen a crear ${DOCKER_REGISTRY_URL}/${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}:${flag}"
-          
-          echo "*** Login de ${{ env.DOCKER_USERNAME }} en ${{ env.DOCKER_REGISTRY_URL }}"
-          echo "${{ env.DOCKER_PASSWORD }}" | docker login ${{ env.DOCKER_REGISTRY_URL }} -u ${{ env.DOCKER_USERNAME }} --password-stdin
-          
-          echo "*** Construimos la imagen ${{ env.DOCKER_REGISTRY_URL }}/${{ env.DOCKER_IMAGE_NAME }}:latest"
-          sudo docker build . \
-            --file Dockerfile \
-            --tag ${{ env.DOCKER_IMAGE_NAME }}:latest \
-            --tag ${{ env.DOCKER_IMAGE_NAME }}:${flag} \
-            --output=type=registry
+#      - name: Buildx the Docker image
+#        run: |
+#          flag=$(date +%s)
+#          echo "*** Imagen a crear ${DOCKER_REGISTRY_URL}/${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}:${flag}"
+#          
+#          echo "*** Login de ${{ env.DOCKER_USERNAME }} en ${{ env.DOCKER_REGISTRY_URL }}"
+#          echo "${{ env.DOCKER_PASSWORD }}" | docker login ${{ env.DOCKER_REGISTRY_URL }} -u ${{ env.DOCKER_USERNAME }} --password-stdin
+#          
+#          echo "*** Construimos la imagen ${{ env.DOCKER_REGISTRY_URL }}/${{ env.DOCKER_IMAGE_NAME }}:latest"
+#          sudo docker build . \
+#            --file Dockerfile \
+#            --tag ${{ env.DOCKER_IMAGE_NAME }}:latest \
+#            --tag ${{ env.DOCKER_IMAGE_NAME }}:${flag} \
+#            --output=type=registry
+      - name: Docker Login
+        # You may pin to the exact commit or the version.
+        # uses: docker/login-action@34d5f75b0d6d0d22f06d83acf2fa1b144409ec83
+        uses: docker/login-action@v1.4.1
+        with:
+          # Server address of Docker registry. If not set then will default to Docker Hub
+          registry: env.DOCKER_REGISTRY_URL # optional
+          # Username used to log against the Docker registry
+          username: env.DOCKER_USERNAME # optional
+          # Password or personal access token used to log against the Docker registry
+          password: env.DOCKER_PASSWORD
+          # Log out from the Docker registry at the end of a job
+          logout: true # optional, default is true
 
+      - name: Build and push Docker images
+        # You may pin to the exact commit or the version.
+        # uses: docker/build-push-action@ab83648e2e224cfeeab899e23b639660765c3a89
+        uses: docker/build-push-action@v1.1.1
+        with:
+          # Username used to log in to a Docker registry. If not set then no login will occur
+          username: env.DOCKER_USERNAME # optional
+          # Password or personal access token used to log in to a Docker registry. If not set then no login will occur
+          password: env.DOCKER_PASSWORD # optional
+          # Server address of Docker registry. If not set then will default to Docker Hub
+          registry: env.DOCKER_REGISTRY_URL # optional
+          # Docker repository to tag the image with
+          repository: env.DOCKER_IMAGE_NAME
+          # Comma-delimited list of tags. These will be added to the registry/repository to form the image's tags
+          tags: ${{ env.DOCKER_IMAGE_NAME }}:latest, ${{ env.DOCKER_IMAGE_NAME }}:${date +%s} # optional
+          # Automatically tags the built image with the git reference as per the readme
+          #tag_with_ref: # optional
+          # Automatically tags the built image with the git short SHA as per the readme
+          #tag_with_sha: # optional
+          # Path to the build context
+          path: . # optional, default is .
+          # Path to the Dockerfile (Default is '{path}/Dockerfile')
+          dockerfile: ./Dockerfile # optional
+          # Sets the target stage to build
+          #target: # optional
+          # Always attempt to pull a newer version of the image
+          #always_pull: # optional
+          # Comma-delimited list of build-time variables
+          #build_args: # optional
+          # Comma-delimited list of images to consider as cache sources
+          #cache_froms: # optional
+          # Comma-delimited list of labels to add to the built image
+          #labels: # optional
+          # Adds labels with git repository information to the built image
+          #add_git_labels: # optional
+          # Whether to push the image
+          push: true # optional, default is true
