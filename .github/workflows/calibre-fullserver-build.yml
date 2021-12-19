@@ -20,8 +20,15 @@ jobs:
 
       - name: Create image Flag
         run: |
+          # disable command workflow processing
+          echo "::stop-commands::`echo -n ${{ github.token }} | sha256sum | head -c 64`"
+
+          # log untrusted output
           export FLAG=$(date +%s)
           echo "::set-env name=FLAG::$FLAG"
+
+          # enable workflow command processing
+          echo "::`echo -n ${{ github.token }} | sha256sum | head -c 64`::"
       
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
