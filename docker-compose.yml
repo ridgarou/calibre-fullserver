@@ -1,0 +1,18 @@
+---
+version: "2.1"
+services:
+  calibre-web:
+    build: .
+    container_name: calibre-web
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Madrid
+      #- DOCKER_MODS=linuxserver/calibre-web:calibre #optional
+      #- OAUTHLIB_RELAX_TOKEN_SCOPE=1 #optional
+    volumes:
+      - /opt/containers-data/configs/calibre-server:/config
+      - "/srv/dev-disk-by-label-Disco02/Public/Shared Library:/books"
+    ports:
+      - 8083:8083
+    restart: unless-stopped
