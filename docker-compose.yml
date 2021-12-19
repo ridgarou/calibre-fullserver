@@ -14,5 +14,5 @@ services:
       - /opt/containers-data/configs/calibre-server:/config
       - "/srv/dev-disk-by-label-Disco02/Public/Shared Library:/books"
     ports:
-      - 8083:8083
+      - 8084:8083
     restart: unless-stopped
